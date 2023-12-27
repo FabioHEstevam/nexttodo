@@ -1,9 +1,11 @@
+import SignUpForm from "./SignupForm";
+
 type Props = {};
 
 function Page(props: Props){
     return (
         <>
-        Sign Up
+        <SignUpForm/>
         </>
     )
 }
