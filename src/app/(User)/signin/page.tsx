@@ -1,9 +1,11 @@
+import SignInForm from "./signInForm";
+
 type Props = {};
 
 function Page(props: Props){
     return (
         <>
-        Sign in
+        <SignInForm/>
         </>
     )
 }

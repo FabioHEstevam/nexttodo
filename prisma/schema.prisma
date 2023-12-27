@@ -80,7 +80,7 @@ model Category {
 }
 
 model Task {
-  id               String    @id @default(cuid())
+  id               String     @id @default(cuid())
   title            String
   description      String?
   creationDate     DateTime
@@ -92,5 +92,5 @@ model Task {
 
 enum TaskStatus {
   PENDING
-  DONE          
+  DONE
 }
