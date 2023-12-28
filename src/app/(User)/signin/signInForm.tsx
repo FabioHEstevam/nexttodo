@@ -8,22 +8,51 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { signIn, useSession } from 'next-auth/react'
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 type Props = {};
 
 function SignInForm(props: Props) {
+    const { toast } = useToast()
+    const { data: Session, status } = useSession()
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof SignInSchema>>({
         resolver: zodResolver(SignInSchema),
         defaultValues: {
             email: "",
+            password: "",
         },
     })
 
     async function onSubmit(values: z.infer<typeof SignInSchema>) {
         console.log(values)
+
+        try {
+            const response = await signIn('credentials', {
+                email: values.email,
+                password: values.password
+            })
+            console.log(response)
+            toast({
+                description: "User Registered Successfully",
+            })
+            router.push('/')
+        } catch (error) {
+            console.log(error)
+            toast({
+                description: "Something error happpended",
+            })
+        }
+
+    }
+
+    if (Session) {
+        router.push('/')
     }
 
     return (
@@ -61,7 +90,6 @@ function SignInForm(props: Props) {
                         <div className="flex flex-row justify-center w-full">
                             <Button type="submit" className="">Submit</Button>
                         </div>
-
                     </form>
                 </Form>
 
@@ -70,20 +98,27 @@ function SignInForm(props: Props) {
                 <h1 className="text-lg font-semibold text-center">Sing in with:</h1>
 
                 <div className="flex flex-row justify-center w-full">
-                    <Button onClick={() => console.log("Ma oi")/*signIn('google')*/} type='button' variant='ghost'>
+                    <Button onClick={() => signIn('facebook')} type='button' variant='ghost'>
                         <Image src={"facebook.svg"} alt="Facebook Logo" width={100} height={100} className="h-5 w-5" />
                     </Button>
-                    <Button onClick={() => console.log("Ma oi")/*signIn('google')*/} type='button' variant='ghost'>
+                    <Button onClick={() => signIn('google')} type='button' variant='ghost'>
                         <Image src={"google.svg"} alt="Google Logo" width={100} height={100} className="h-5 w-5" />
                     </Button>
-                    <Button onClick={() => console.log("Ma oi")/*signIn('google')*/} type='button' variant='ghost'>
+                    <Button onClick={() => signIn('linkedin')} type='button' variant='ghost'>
                         <Image src={"linkedin.svg"} alt="LinkedIn Logo" width={100} height={100} className="h-5 w-5" />
                     </Button>
                 </div>
 
+                <Separator />
+
+                <div className="flex flex-row justify-center w-full text-sm text-center">
+                    <Link className={buttonVariants({ variant: "link" }) + " "} href={"/forgotpassword"}>
+                        Forgot your password?
+                    </Link>
+                </div>
             </Card>
         </div>
     )
-}
+}   
 
 export default SignInForm;

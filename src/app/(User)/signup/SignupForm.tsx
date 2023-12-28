@@ -1,5 +1,5 @@
 'use client'
-import { SingUpSchema } from "@/ZodSchema/UserSchema";
+import { SignUpSchema } from "@/ZodSchema/UserSchema";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -7,21 +7,41 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-
+import axios from "axios"
+import { useToast } from "@/components/ui/use-toast";
 
 type Props = {};
 
 function SignUpForm(props: Props) {
 
-    const form = useForm<z.infer<typeof SingUpSchema>>({
-        resolver: zodResolver(SingUpSchema),
+    const { toast } = useToast()
+
+    const form = useForm<z.infer<typeof SignUpSchema>>({
+        resolver: zodResolver(SignUpSchema),
         defaultValues: {
             username: "",
         },
     })
 
-    async function onSubmit(values: z.infer<typeof SingUpSchema>) {
+    async function onSubmit(values: z.infer<typeof SignUpSchema>) {
         console.log(values)
+        try {
+            const response = await axios.post('/api/signup',{
+                username:values.username,
+                email:values.email,
+                password:values.password,
+                confirmpassword:values.confirmpassword
+            })
+            toast({
+                description: "User Registered Successfully",
+            })
+            console.log(response)
+          } catch (error) {
+            console.log(error)
+            toast({
+                description: "Something error happpended",
+            })
+          }
     }
 
     return (
@@ -73,9 +93,9 @@ function SignUpForm(props: Props) {
                             name="confirmpassword"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Confirm password:</FormLabel>
+                                    <FormLabel>Confirm Password:</FormLabel>
                                     <FormControl>
-                                        <Input type="confirmpassword" placeholder="password" {...field} />
+                                        <Input type="password" placeholder="password" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -90,4 +110,4 @@ function SignUpForm(props: Props) {
     )
 }
 
-export default SignUpForm
+export default SignUpForm;
