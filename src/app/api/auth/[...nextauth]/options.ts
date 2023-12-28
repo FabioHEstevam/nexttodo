@@ -49,7 +49,8 @@ export const options:NextAuthOptions = {
         })
     ],
     pages:{
-        signIn: '/signin'
+        signIn: '/signin',
+        //newUser: '/auth/new-user',
     },
     callbacks:{
         async jwt({token,user,session}){

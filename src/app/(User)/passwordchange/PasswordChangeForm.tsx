@@ -25,7 +25,8 @@ function PasswordChangeForm({ token }: Props) {
     const form = useForm<PasswordT>({
         resolver: zodResolver(PasswordSchema),
         defaultValues: {
-
+            password: "",
+            confirmpassword: "",
         }
     });
 

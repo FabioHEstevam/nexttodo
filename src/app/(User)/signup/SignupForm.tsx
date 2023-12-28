@@ -9,40 +9,54 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import axios from "axios"
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
+import { useSession } from 'next-auth/react'
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 function SignUpForm(props: Props) {
 
-    const { toast } = useToast()
+    const { toast } = useToast();
+    const { data: Session, status } = useSession();
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof SignUpSchema>>({
         resolver: zodResolver(SignUpSchema),
         defaultValues: {
             username: "",
+            email: "",
+            password: "",
+            confirmpassword: "",
         },
     })
 
     async function onSubmit(values: z.infer<typeof SignUpSchema>) {
-        console.log(values)
+
         try {
-            const response = await axios.post('/api/signup',{
-                username:values.username,
-                email:values.email,
-                password:values.password,
-                confirmpassword:values.confirmpassword
+            const response = await axios.post('/api/signup', {
+                username: values.username,
+                email: values.email,
+                password: values.password,
+                confirmpassword: values.confirmpassword
             })
             toast({
                 description: "User Registered Successfully",
             })
-            console.log(response)
-          } catch (error) {
-            console.log(error)
+
+        } catch (error) {
+            //console.log(error)
             toast({
                 description: "Something error happpended",
             })
-          }
+        }
     }
+
+    useEffect(() => {
+        if (Session) {
+            router.push('/')
+        }
+    })
 
     return (
         <div className="mt-4 max-w-[1280px] mx-auto">

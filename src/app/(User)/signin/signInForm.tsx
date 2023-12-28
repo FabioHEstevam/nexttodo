@@ -13,6 +13,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 type Props = {};
 
@@ -35,13 +36,21 @@ function SignInForm(props: Props) {
         try {
             const response = await signIn('credentials', {
                 email: values.email,
-                password: values.password
+                password: values.password,
+                redirect: false,
             })
             console.log(response)
-            toast({
-                description: "User Registered Successfully",
-            })
-            router.push('/')
+            if (response?.status == 200) {
+                toast({
+                    description: "SignIn Successfully",
+                })
+                router.push('/')
+            } else {
+                toast({
+                    description: "Password or User wrong",
+                })
+            }
+
         } catch (error) {
             console.log(error)
             toast({
@@ -51,9 +60,11 @@ function SignInForm(props: Props) {
 
     }
 
-    if (Session) {
-        router.push('/')
-    }
+    useEffect(() => {
+        if (Session) {
+            router.push('/')
+        }
+    }, [])
 
     return (
         <div className="mt-4 max-w-[1280px] mx-auto">
@@ -119,6 +130,6 @@ function SignInForm(props: Props) {
             </Card>
         </div>
     )
-}   
+}
 
 export default SignInForm;

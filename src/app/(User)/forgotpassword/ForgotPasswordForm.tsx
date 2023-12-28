@@ -24,6 +24,9 @@ function ForgotPasswordForm(props: Props) {
 
     const form = useForm<z.infer<typeof ForgetPasswordSchema>>({
         resolver: zodResolver(ForgetPasswordSchema),
+        defaultValues: {
+            email: "",
+        }
     })
 
     async function onSubmit(values: z.infer<typeof ForgetPasswordSchema>) {

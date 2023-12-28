@@ -18,15 +18,16 @@ export const SignUpSchema = z.object({
         ).refine(value => !!value, {
             message: "Password is Mandatory"
         }),
+        
     confirmpassword: z.string()
         .min(8, { message: "Password must be at least 8 characters" })
         .max(15, { message: "Password must not be more than 15 charaters" })
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/,
             'Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character (@$!%*?&) and be between 8 to 15 characters long.'
-        )
-        .refine(value => !!value, {
+        ).refine(value => !!value, {
             message: "Password is Mandatory"
         })
+        
 }).refine((data) => data.password === data.confirmpassword, {
     message: "Password did not match",
     path: ["confirmpassword"]

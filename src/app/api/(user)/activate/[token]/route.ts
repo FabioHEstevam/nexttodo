@@ -12,16 +12,9 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
                 some: {
                     AND: [
                         {
-                            activatedAt: null
-                        },
-                        {
-                            createdAt:
-                            {
-                                gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+                            token: {
+                                equals: token
                             }
-                        },
-                        {
-                            token
                         }
                     ]
                 }
@@ -29,20 +22,47 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
         }
     })
 
+    const usertoken = await prisma.activateToken.findUnique({
+        where: {
+            token
+        }
+    })
+
+    console.log(user)
+
     if (!user) {
-        throw new Error('Invalid Token')
+        //throw new Error('Invalid Token')
+        return NextResponse.json('Invalid URL')
     }
+
+    if (usertoken) {
+        if (usertoken.activatedAt) {
+            return NextResponse.json('Email has been verified')
+        }
+
+        if (usertoken.createdAt < new Date(Date.now() - 24 * 60 * 60 * 1000)) {
+            return NextResponse.json('URL expired')
+        }
+    }
+
 
     await prisma.user.update({
         where: {
             id: user.id
         },
         data: {
-            verified_user: true
+            verified_user: true,
         }
     })
 
-    redirect('/')
+    await prisma.activateToken.update({
+        where: {
+            token: token
+        },
+        data: {
+            activatedAt: new Date(Date.now())
+        }
+    })
 
     return NextResponse.json('Sucessfuly verified user')
 
