@@ -44,7 +44,7 @@ function SignInForm(props: Props) {
                 toast({
                     description: "SignIn Successfully",
                 })
-                router.push('/')
+                router.push('/task')
             } else {
                 toast({
                     description: "Password or User wrong",
@@ -62,9 +62,9 @@ function SignInForm(props: Props) {
 
     useEffect(() => {
         if (Session) {
-            router.push('/')
+            router.push('/task')
         }
-    }, [])
+    })
 
     return (
         <div className="mt-4 max-w-[1280px] mx-auto">
@@ -109,14 +109,14 @@ function SignInForm(props: Props) {
                 <h1 className="text-lg font-semibold text-center">Sing in with:</h1>
 
                 <div className="flex flex-row justify-center w-full">
-                    <Button onClick={() => signIn('facebook')} type='button' variant='ghost'>
-                        <Image src={"facebook.svg"} alt="Facebook Logo" width={100} height={100} className="h-5 w-5" />
+                    <Button onClick={() => signIn('facebook',{callbackUrl:'/task'})} type='button' variant='ghost'>
+                        <Image src={"/facebook.svg"} alt="Facebook Logo" width={100} height={100} className="h-5 w-5" />
                     </Button>
-                    <Button onClick={() => signIn('google')} type='button' variant='ghost'>
-                        <Image src={"google.svg"} alt="Google Logo" width={100} height={100} className="h-5 w-5" />
+                    <Button onClick={() => signIn('google',{callbackUrl:'/task'})} type='button' variant='ghost'>
+                        <Image src={"/google.svg"} alt="Google Logo" width={100} height={100} className="h-5 w-5" />
                     </Button>
-                    <Button onClick={() => signIn('linkedin')} type='button' variant='ghost'>
-                        <Image src={"linkedin.svg"} alt="LinkedIn Logo" width={100} height={100} className="h-5 w-5" />
+                    <Button onClick={() => signIn('linkedin',{callbackUrl:'/task'})} type='button' variant='ghost'>
+                        <Image src={"/linkedin.svg"} alt="LinkedIn Logo" width={100} height={100} className="h-5 w-5" />
                     </Button>
                 </div>
 

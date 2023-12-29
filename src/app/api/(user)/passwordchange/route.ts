@@ -1,63 +1,86 @@
 import prisma from "@/app/prismadb"
+import { getServerSession } from "next-auth/next"
+import { options } from "../../auth/[...nextauth]/options";
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import bcrypt from "bcrypt"
 import nodemailer from "nodemailer"
 import { randomUUID } from "crypto";
-import bcrypt from "bcrypt"
 
-const ForgetPasswordSchema = z.object({
-    email: z.string().email().refine(value => !! value, {
-        message: 'E-mail is mandatory and should be a valid e-mail'
-    })
-})
+export async function PATCH(request: Request){
 
-export async function POST(request: Request) {
-    const body = await request.json()
-    const { email } = body
-    
-    if(ForgetPasswordSchema.safeParse(body).success === false){
-        return NextResponse.error()
-    }
-
-    const userExist = await prisma.user.findUnique({
-        where:{
-            email
-        }
-    })
-
-    if(!userExist){
-        return NextResponse.json({ErrorMessage: "User not found"})
-    }
-
-    var transport = nodemailer.createTransport({
-        pool: true,
-        host: "mail.fabioestevam.com.br",
-        port: 465,
-        secure: true, // use TLS
-        auth:{
-            user:process.env.USER_MAIL,
-            pass:process.env.USER_PASSWORD
-        }
-    })
+    const session = await getServerSession(options)
+    const { password, newpassword } = await request.json();
 
     try{
-        const forgetPasswordToken = await prisma.user.update({
+        if(!session?.user?.email){
+            return NextResponse.error()
+        }
+
+        const user = await prisma?.user.findUnique({
             where:{
-                email
+                email: session.user.email,
+            },
+        })
+
+        if(!user || !user.email || !user.password){
+            return NextResponse.error()
+        }
+
+        const passwordMatch = await bcrypt.compare(password,user.password)
+
+        if(!passwordMatch){
+            return NextResponse.error()
+        }
+
+        var transport = nodemailer.createTransport({
+            pool: true,
+            host: "mail.fabioestevam.com.br",
+            port: 465,
+            secure: true,
+            auth:{
+                user:process.env.USER_MAIL,
+                pass:process.env.USER_PASSWORD,
+            }
+        })
+
+        var token = `${randomUUID()}${randomUUID()}`.replace(/-/g,'');
+        var hashToken = await bcrypt.hash(token, 10);
+
+        const verificationtoken = await prisma.user.update({
+            where:{
+                email: user.email,
             },
             data:{
-                forgetpasswordtoken: `${randomUUID()}${randomUUID()}`.replace(/-/g,''),
+                forgetpasswordtoken: hashToken,
             }
         })
 
         const options = {
             from: process.env.USER_MAIL,
-            to: userExist.email as string,
-            subject: "Password change request",
-            html:`<a href="${process.env.NEXT_URL}/passwordchange/${forgetPasswordToken.forgetpasswordtoken}">Click here to change your password</a>`
+            to: user.email as string,
+            subject: "Your password has been changed",
+            html:`
+            Your password has been changed, 
+            if you do not recognize this change 
+            <a href="${process.env.NEXT_URL}/passwordreset/${user.id}/${token}">
+            click here to reset your password.
+            </a>
+            `
         }
 
-        transport.verify(function (error, success){
+        const hashednewpassword = await bcrypt.hash(newpassword,10)
+
+        const changepassword = await prisma.user.update({
+            where:{
+                id:user.id
+            },
+            data:{
+                password:hashednewpassword,
+                forgetpasswordtoken:hashToken
+            }
+        })
+
+        transport.verify(function(error, success){
             if(error){
                 console.log(error)
             }else{
@@ -67,45 +90,9 @@ export async function POST(request: Request) {
 
         await transport.sendMail(options)
 
-        return NextResponse.json("Sucessfully send the password change email to user")
-    
-    } catch (error) {
-        
-        return NextResponse.error();
-
-    }
-}
-
-export async function PATCH(request: Request){
-    
-    const { token , newpassword } = await request.json()
-
-    try {
-        const userExist = await prisma.user.findFirst({
-            where: {
-                forgetpasswordtoken: token
-            }
-        })
-
-        if (!userExist){
-            return NextResponse.error()
-        }
-
-        const hashednewpassword = await bcrypt.hash(newpassword, 10);
-
-        const changepassword = await prisma.user.update({
-            where:{
-                id:userExist.id
-            },
-            data:{
-                password:hashednewpassword,
-                forgetpasswordtoken:null
-            }
-        })
-
         return NextResponse.json(changepassword, {status: 200})
-
-    } catch (error) {
+    
+    }catch (error){
         console.log(error);
         return NextResponse.json("Error while changing password", {status:500})
     }

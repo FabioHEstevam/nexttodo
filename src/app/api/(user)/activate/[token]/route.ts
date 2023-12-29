@@ -45,6 +45,7 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
         }
     }
 
+    const instant = new Date(Date.now());
 
     await prisma.user.update({
         where: {
@@ -52,6 +53,7 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
         },
         data: {
             verified_user: true,
+            emailVerified: instant
         }
     })
 
@@ -60,7 +62,7 @@ export async function GET(request: NextRequest, { params }: { params: { token: s
             token: token
         },
         data: {
-            activatedAt: new Date(Date.now())
+            activatedAt: instant
         }
     })
 

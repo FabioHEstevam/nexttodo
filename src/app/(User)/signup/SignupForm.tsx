@@ -45,16 +45,16 @@ function SignUpForm(props: Props) {
             })
 
         } catch (error) {
-            //console.log(error)
+            console.log(error)
             toast({
-                description: "Something error happpended",
+                description: "Something went wrong",
             })
         }
     }
 
     useEffect(() => {
         if (Session) {
-            router.push('/')
+            router.push('/task')
         }
     })
 

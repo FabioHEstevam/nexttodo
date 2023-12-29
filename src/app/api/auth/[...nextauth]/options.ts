@@ -36,7 +36,6 @@ export const options:NextAuthOptions = {
                   return null;
                 }
                 
-              
                 const passwordMatch = await bcrypt.compare(credentials.password, user.password!);
                 
                 if(!passwordMatch || !user.verified_user){

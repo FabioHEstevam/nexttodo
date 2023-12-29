@@ -13,14 +13,13 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { z } from "zod"
 
 type Props = {
+    id: string,
     token: string,
 }
 
 type PasswordT = z.infer<typeof PasswordSchema>
 
-function PasswordChangeForm({ token }: Props) {
-
-    const [success, setSuccess] = useState(false);
+function PasswordChangeForm({ id, token }: Props) {
 
     const form = useForm<PasswordT>({
         resolver: zodResolver(PasswordSchema),
@@ -36,7 +35,8 @@ function PasswordChangeForm({ token }: Props) {
 
     const onSubmit: SubmitHandler<PasswordT> = async (data) => {
         try {
-            const response = await axios.patch('/api/passwordchange', {
+            const response = await axios.patch('/api/passwordreset', {
+                id,
                 token,
                 newpassword: data.password
             })
