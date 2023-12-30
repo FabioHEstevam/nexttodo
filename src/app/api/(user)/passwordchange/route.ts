@@ -8,7 +8,7 @@ import { randomUUID } from "crypto";
 
 export async function PATCH(request: Request){
 
-    const session = await getServerSession(options)
+    const session = await getServerSession(options);
     const { password, newpassword } = await request.json();
 
     try{

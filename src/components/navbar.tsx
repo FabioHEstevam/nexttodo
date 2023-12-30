@@ -15,7 +15,7 @@ function Navbar() {
     const { data: Session, status } = useSession()
     const router = useRouter()
 
-    const userName = Session?.user?.name?.split(' ')
+    const userName = Session?.user?.name?.trim().split(' ')
 
     return (
         <div className='max-w-[1280px] mx-auto'>
