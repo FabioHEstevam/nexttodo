@@ -6,74 +6,94 @@ import prisma from "@/app/prismadb"
 import bcrypt from "bcrypt"
 import axios from "axios";
 
-export const options:NextAuthOptions = {
+export const options: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
-    providers:[
+    providers: [
         GoogleProvider({
-            clientId:process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret:process.env.GOOGLE_CLIENT_SECRET as string,
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         }),
         CredentialProvider({
-            name:"credentials",
-            credentials:{
+            name: "credentials",
+            credentials: {
                 email: {},
                 password: {},
             },
             async authorize(credentials, req) {
                 if (!credentials?.email || !credentials?.password) {
-                  return null;
+                    return null;
                 }
 
                 console.log(credentials.email)
-              
+
                 const user = await prisma.user.findUnique({
-                  where: {
-                    email: credentials.email,
-                  },
+                    where: {
+                        email: credentials.email,
+                    },
                 });
-              
+
                 if (!user) {
-                  return null;
+                    return null;
                 }
-                
+
                 const passwordMatch = await bcrypt.compare(credentials.password, user.password!);
-                
-                if(!passwordMatch || !user.verified_user){
+
+                if (!passwordMatch || !user.verified_user) {
                     return null
                 }
 
                 return user
             },
-              
+
         })
     ],
-    pages:{
+    pages: {
         signIn: '/signin',
         //newUser: '/auth/new-user',
     },
-    callbacks:{
-        async jwt({token,user,session}){
-            if(user){
+    callbacks: {
+        async jwt({ token, user, session, trigger }) {
+            if (user) {
                 return {
                     ...token,
-                    id: user.id
+                    id: user.id,
                 }
             }
-            return token
-        },
-        async session({session,user,token}){
-                return {
-                    ...session,
-                    user:{
-                        ...session.user,
-                        id:token.id
+
+            if (trigger === "update") {
+
+                const upUser = await prisma.user.findUnique({
+                    where: {
+                        email: token.email as string,
+                    }
+                })
+
+                if (upUser) {
+  
+                    return {
+                        ...token,
+                        id: upUser.id,
+                        name: upUser.name,
+                        picture: upUser.image
                     }
                 }
+            }
+
+            return token
+        },
+        async session({ session, user, token}) {
+            return {
+                ...session,
+                user: {
+                    ...session.user,
+                    id: token.id
+                }
+            }
         },
     },
-    session:{
-        strategy:"jwt",
+    session: {
+        strategy: "jwt",
     },
-    secret:process.env.NEXTAUTH_SECRET,
-    debug:process.env.NODE_ENV === "development"
+    secret: process.env.NEXTAUTH_SECRET,
+    debug: process.env.NODE_ENV === "development"
 }

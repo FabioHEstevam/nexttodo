@@ -4,7 +4,6 @@ import { options } from "../../auth/[...nextauth]/options";
 import { Storage } from "@google-cloud/storage";
 import { randomUUID } from "crypto";
 import prisma from "@/app/prismadb";
-import { Session } from "inspector";
 
 const storage = new Storage({
     projectId: process.env.GCS_PROJECT_ID,

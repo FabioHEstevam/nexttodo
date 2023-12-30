@@ -7,9 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { useState } from "react";
-import { useSession } from "next-auth/react"
+import { useSession, getSession } from "next-auth/react"
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 
 type Props = {}
@@ -17,10 +18,12 @@ type Props = {}
 
 function DetailsForm(props: Props) {
 
-    const { data: Session , status, update} = useSession()
+    const { data: Session, status, update } = useSession()
 
     const [image, setImage] = useState<File>();
     const [username, setUserName] = useState(Session?.user?.name)
+
+    const router = useRouter()
 
     async function onSubmit() {
 
@@ -30,19 +33,20 @@ function DetailsForm(props: Props) {
             formData.append('image', image);;
         }
 
-        if (username){
-            if (Session?.user?.name!=username){
+        if (username) {
+            if (Session?.user?.name != username) {
                 formData.append('username', username);
             }
         }
 
         try {
-            const response = await axios.post('/api/update', formData).then((response) => {
-                console.log(response.data.image);
-                update({name:response.data.username, image: response.data.image});
-                toast({
-                    description: "User data updated"
-                })
+            const response = await axios.post('/api/update', formData).then(() => {
+                update().then(async () => {
+                    toast({
+                        description: "User data updated"
+                    })
+                     setTimeout(()=>location.reload(),2000);
+                });
             })
         } catch (error) {
             console.log(error)
@@ -62,10 +66,9 @@ function DetailsForm(props: Props) {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-
                 <div className="space-y-1">
                     <Label htmlFor="username">Profile name</Label>
-                    <Input id="username" defaultValue={username?username:''} onChange={(e)=>setUserName(e.target.value)}/>
+                    <Input id="username" defaultValue={Session?.user?.name as string} onChange={(e) => setUserName(e.target.value)} />
                 </div>
 
                 <div className="space-y-1">
