@@ -83,8 +83,6 @@ export async function PATCH(request: Request){
         transport.verify(function(error, success){
             if(error){
                 console.log(error)
-            }else{
-                console.log("Server is good to send email")
             }
         })
 

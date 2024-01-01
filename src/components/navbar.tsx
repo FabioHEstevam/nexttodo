@@ -6,7 +6,7 @@ import Logo from "./logo";
 import { LogIn, LogOut, Settings, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react"
-import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useRouter } from "next/navigation";
 
@@ -62,10 +62,13 @@ function Navbar() {
                                 <DropdownMenuTrigger>
                                     <Avatar>
                                         <AvatarImage src={Session.user?.image ? Session.user?.image : ""} alt="@shadcn" />
-                                        <AvatarFallback>{userName&&userName.map((x, i)=>i==0?x[0].toUpperCase():!userName[i+1]&&x[0].toUpperCase())}</AvatarFallback>
+                                        <AvatarFallback>{userName && userName.map((x, i) => i == 0 ? x[0].toUpperCase() : !userName[i + 1] && x[0].toUpperCase())}</AvatarFallback>
                                     </Avatar>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56 ">
+                                <DropdownMenuContent className="w-fit ">
+                                    <DropdownMenuLabel className="text-xl">{Session.user?.name}</DropdownMenuLabel>
+                                    <DropdownMenuLabel className="text-sm">{Session.user?.email}</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={() => router.push("/account")}>
                                         <UserIcon className="mr-2 h-4 w-4" />
                                         <span>Account</span>

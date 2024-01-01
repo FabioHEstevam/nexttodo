@@ -1,10 +1,18 @@
+import CategoryTable from "./categoryTable";
+
+import { Category } from "@/lib/definitions";
+import { deleteCategory, findAllCategories } from "@/lib/data";
+
 type Props = {};
 
-function Page(props: Props) {
+async function Page(props: Props) {
+
+    const categories = await findAllCategories() as unknown as Category[]
+
     return (
         <div className='max-w-[1280px] mx-auto'>
             <div className='flex items-center py-4 gap-10 justify-between'>
-                Categories
+                <CategoryTable categories={categories}/>
             </div>
         </div>
     )

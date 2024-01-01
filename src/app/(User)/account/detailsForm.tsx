@@ -40,8 +40,6 @@ function DetailsForm(props: Props) {
 
     const { data: Session, update } = useSession()
 
-    const [image, setImage] = useState<File>();
-
     const username = Session?.user?.name as string;
 
     const form = useForm<z.infer<typeof UpdateSchema>>({
@@ -50,8 +48,6 @@ function DetailsForm(props: Props) {
             username: '',
         }
     })
-
-    const { ref, ...field } = form.register("image")
 
     async function onSubmit(values: z.infer<typeof UpdateSchema>) {
 

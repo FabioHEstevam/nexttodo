@@ -30,7 +30,6 @@ function ForgotPasswordForm(props: Props) {
     })
 
     async function onSubmit(values: z.infer<typeof ForgetPasswordSchema>) {
-        console.log(values);
         try {
             const response = await axios.post('/api/passwordreset', {
                 email: values.email,
@@ -39,7 +38,7 @@ function ForgotPasswordForm(props: Props) {
                 description: "E-mail sent to your registered email",
             })
         } catch (error) {
-            console.log('Error', error)
+            console.log(error)
             toast({
                 description: "Error while sendind e-mail to your registered e-mail"
             })

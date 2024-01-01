@@ -31,7 +31,6 @@ function SignInForm(props: Props) {
     })
 
     async function onSubmit(values: z.infer<typeof SignInSchema>) {
-        console.log(values)
 
         try {
             const response = await signIn('credentials', {
@@ -39,7 +38,6 @@ function SignInForm(props: Props) {
                 password: values.password,
                 redirect: false,
             })
-            console.log(response)
             if (response?.status == 200) {
                 toast({
                     description: "SignIn Successfully",

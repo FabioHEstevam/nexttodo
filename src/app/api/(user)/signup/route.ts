@@ -10,7 +10,6 @@ type SignupSchemaT = z.infer<typeof SignUpSchema>
 
 export async function POST (request: Request){
     const body:SignupSchemaT = await request.json()
-    console.log(SignUpSchema.safeParse(body))
 
     if(SignUpSchema.safeParse(body).success === false){
         return NextResponse.json("Data provided is not valid", {status:500})
@@ -68,8 +67,6 @@ export async function POST (request: Request){
         transport.verify(function (error, success) {
             if(error){
                 console.log(error)
-            } else{
-                console.log("Server is good to send email")
             }
         })
 

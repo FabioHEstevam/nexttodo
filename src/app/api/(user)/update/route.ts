@@ -99,18 +99,6 @@ export async function POST(request: NextRequest) {
 
 }
 
-
-/*const user = await prisma?.user.update({
-                where: {
-                    email: session.user.email,
-                },
-                data: {
-                    name: username,
-                }
-            })
-            
-*/
-
 /* 
             Para salvar em um diretório local 
             

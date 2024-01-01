@@ -63,8 +63,6 @@ export async function POST(request: Request) {
         transport.verify(function (error, success){
             if(error){
                 console.log(error)
-            }else{
-                console.log("Server is good to send email")
             }
         })
 
@@ -82,10 +80,6 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request){
     
     const { id, token , newpassword } = await request.json();
-
-    console.log(id)
-    console.log(token)
-    console.log(newpassword)
 
     try {
         const userExist = await prisma.user.findUnique({
