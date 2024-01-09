@@ -134,3 +134,56 @@ export async function updateCategory(category: Category) {
     }
 
 }
+
+export async function findAllTasks(){
+
+    noStore();
+
+    try {
+
+        const user = await getSessionUser();
+
+        const tasks = await prisma.task.findMany({
+            where: {
+                userId : user.id
+            },
+            include: {
+                TaskItem : true,
+                category: {
+                    select:{
+                        name: true
+                    }
+                }
+                
+            }
+        })
+
+        return tasks;
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to find all categories.');
+    }
+
+
+}
+
+export async function deleteTask(taskId: string) {
+
+    try {
+        const user = await getSessionUser();
+
+        const result = await prisma.task.delete({
+            where: {
+                userId: user.id,
+                id: taskId,
+            }
+        })
+
+        return result;
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to find all categories.');
+    }
+}

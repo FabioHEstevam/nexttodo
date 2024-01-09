@@ -51,6 +51,7 @@ model User {
   sessions            Session[]
   ActivateToken       ActivateToken[]
   Category            Category[]
+  Task                Task[]
 }
 
 model VerificationToken {
@@ -85,9 +86,20 @@ model Task {
   description      String?
   creationDate     DateTime
   completitionDate DateTime?
-  status           TaskStatus @default(DONE)
+  status           TaskStatus @default(PENDING)
   categoryId       String?
-  category         Category?  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category         Category?  @relation(fields: [categoryId], references: [id], onDelete: NoAction)
+  TaskItem         TaskItem[]
+}
+
+model TaskItem {
+  id          String  @id @default(cuid())
+  description String?
+  check       Boolean @default(false)
+  taskId      String
+  task        Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 enum TaskStatus {

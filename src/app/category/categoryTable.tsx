@@ -30,28 +30,26 @@ function CategoryTable(props: Props) {
 
     return (
         <div className="mt-4 max-w-[1280px] w-full mx-auto">
-            <Card className="p-5 max-w-[1280px] w-full mx-auto">
-                <CardHeader>
-                    <CardTitle>Categories</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-wrap flex-row justify-start gap-2">
-                        <CategoryForm category={category} setCategory={setCategory} />
-                        {props.categories?.map((category) => (
-                            <div key={category.id} className="group flex flex-row justify-between h-9 px-4 py-2 border border-input bg-background shadow-sm  items-center whitespace-nowrap rounded-md text-sm font-medium">
-                                {category.name}
-                                <button className="ml-4 hidden hover:bg-accent rounded-md group-hover:block" onClick={(x) => { handelEdit(category) }}>
-                                    <Edit className="w-4 h-4 hidden group-hover:block" />
-                                </button>
 
-                                <button className="ml-4 hidden hover:bg-accent rounded-md group-hover:block" onClick={(x) => { handleDelete(category.id) }}>
-                                    <Delete className="w-4 h-4 hidden group-hover:block" />
-                                </button>
-                            </div>
-                        ))}
+            <div className="text-center text-2xl font-medium mb-8">
+                Categories
+            </div>
+
+            <div className="flex flex-wrap flex-row justify-start gap-2">
+                <CategoryForm category={category} setCategory={setCategory} />
+                {props.categories?.map((category) => (
+                    <div key={category.id} className="group flex flex-row justify-between h-9 px-4 py-2 border border-input bg-background shadow-sm  items-center whitespace-nowrap rounded-md text-sm font-medium">
+                        {category.name}
+                        <button className="ml-4 hidden hover:bg-accent rounded-md group-hover:block" onClick={(x) => { handelEdit(category) }}>
+                            <Edit className="w-4 h-4 hidden group-hover:block" />
+                        </button>
+
+                        <button className="ml-4 hidden hover:bg-accent rounded-md group-hover:block" onClick={(x) => { handleDelete(category.id) }}>
+                            <Delete className="w-4 h-4 hidden group-hover:block" />
+                        </button>
                     </div>
-                </CardContent>
-            </Card>
+                ))}
+            </div>
         </div>
     )
 }
