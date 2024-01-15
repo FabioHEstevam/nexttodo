@@ -105,8 +105,9 @@ function CategoryForm(props: Props) {
                                     <FormMessage />
                                 </FormItem>
                             )} />
-                        <div className="flex flex-row justify-center w-full">
-                            <Button type="submit" className="">Submit</Button>
+                        <div className="flex flex-row justify-end w-full gap-2">
+                            <Button variant={"outline"} type="button" onClick={(e) => setOpen(false)} className="">Cancel</Button>
+                            <Button type="submit" className="">Save</Button>
                         </div>
                     </form>
                 </Form>

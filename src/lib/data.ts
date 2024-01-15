@@ -1,5 +1,5 @@
 'use server'
-import { Category } from "./definitions";
+import { Category, Task } from "./definitions";
 import prisma from "@/app/prismadb"
 import { getServerSession } from "next-auth/next"
 import { options } from "@/app/api/auth/[...nextauth]/options";
@@ -131,6 +131,111 @@ export async function updateCategory(category: Category) {
     } catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to find all categories.');
+    }
+
+}
+
+export async function createTask(title: string, description: string, categoryId: string) {
+
+    try {
+
+        const user = await getSessionUser();
+
+        const category = await prisma.category.findUnique({
+            where: {
+                id: categoryId
+            }
+        })
+
+        const data = await prisma.task.create({
+            data: {
+                title: title,
+                description: description,
+                creationDate: new Date(),
+                userId: user.id,
+                categoryId: category?.id
+            },
+        })
+
+        return title;
+
+    }
+    catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to create new category.');
+    }
+
+}
+
+export async function updateTask(task: Task) {
+
+    try {
+        const user = await getSessionUser();
+
+        const category = await prisma.category.findUnique({
+            where: {
+                id: task.categoryId as string
+            }
+        })
+
+        const result = await prisma.task.update({
+            where: {
+                userId: user.id,
+                id: task.id,
+            },
+            data: {
+                title: task.title,
+                description: task.description,
+                categoryId: category?.id
+            }
+        })
+
+        return result;
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to update Task.');
+    }
+
+}
+
+export async function completeTask(taskId: string) {
+
+    try {
+        const user = await getSessionUser();
+
+        const task = await prisma.task.findUnique({
+            where:{
+                id: taskId
+            }
+        })
+
+        if(!task){
+            throw new Error
+        }
+
+        if(task?.status=="PENDING"){
+            task.completitionDate = new Date()
+            task.status = "DONE"
+        }
+        else{
+            task.completitionDate = null
+            task.status = "PENDING"
+        }
+
+        const result = await prisma.task.update({
+            where: {
+                userId: user.id,
+                id: task.id,
+            },
+            data: task
+        })
+
+        return result;
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to complete Task.');
     }
 
 }

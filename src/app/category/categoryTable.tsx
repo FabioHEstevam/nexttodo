@@ -24,7 +24,7 @@ function CategoryTable(props: Props) {
         route.refresh();
     }
 
-    async function handelEdit(category: Category) {
+    async function handleEdit(category: Category) {
         setCategory(category);
     }
 
@@ -40,7 +40,7 @@ function CategoryTable(props: Props) {
                 {props.categories?.map((category) => (
                     <div key={category.id} className="group flex flex-row justify-between h-9 px-4 py-2 border border-input bg-background shadow-sm  items-center whitespace-nowrap rounded-md text-sm font-medium">
                         {category.name}
-                        <button className="ml-4 hidden hover:bg-accent rounded-md group-hover:block" onClick={(x) => { handelEdit(category) }}>
+                        <button className="ml-4 hidden hover:bg-accent rounded-md group-hover:block" onClick={(x) => { handleEdit(category) }}>
                             <Edit className="w-4 h-4 hidden group-hover:block" />
                         </button>
 

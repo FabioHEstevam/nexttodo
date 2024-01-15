@@ -7,7 +7,9 @@ import { Check, CheckSquare, ClipboardEdit, MoreHorizontal, Trash } from "lucide
 
 type Props = {
     task: Task,
-    handleDelete: (taskId: string) => void
+    handleDelete: (taskId: string) => void,
+    handleEdit: (task: Task) => void,
+    handleComplete: (taskId: string) => void,
 }
 
 function TaskCard(props: Props) {
@@ -17,7 +19,7 @@ function TaskCard(props: Props) {
     const progress = props.task.status == "DONE" ? 100 : completedItens / totalOfItens * 100;
 
     return (
-        <Card className={`group w-full hover:scale-105 hover:text-accent-foreground transition-all duration-100 ease-out `} >
+        <Card className={`group w-full h-32 hover:shadow-md hover:text-accent-foreground transition-all duration-100 ease-out `} >
             <CardHeader>
                 <div className="flex flex-row justify-between items-start">
                     <div className="space-y-2">
@@ -26,7 +28,7 @@ function TaskCard(props: Props) {
                                 {props.task.title}
                             </div>
                             {props.task.category &&
-                                <div className="bg-gray-200 py-1 px-2 rounded-full">
+                                <div className="bg-gray-200 py-1 px-2 rounded-full dark:text-black">
                                     {props.task.category?.name}
                                 </div>
                             }
@@ -36,20 +38,20 @@ function TaskCard(props: Props) {
 
                         <TooltipProvider>
                             <Tooltip >
-                                <TooltipTrigger onClick={() => { console.log("teste") }}>
+                                <TooltipTrigger onClick={() => props.handleComplete(props.task.id)}>
                                     <CheckSquare className="w-5 h-5 hover:stroke-ring" />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Complete</p>
+                                    Complete
                                 </TooltipContent>
                             </Tooltip>
 
                             <Tooltip>
-                                <TooltipTrigger>
+                                <TooltipTrigger onClick={() => props.handleEdit(props.task)}>
                                     <ClipboardEdit className="w-5 h-5 hover:stroke-ring" />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Edit</p>
+                                    Edit
                                 </TooltipContent>
                             </Tooltip>
 
@@ -58,7 +60,7 @@ function TaskCard(props: Props) {
                                     <Trash className="w-5 h-5 hover:stroke-ring" />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Remove</p>
+                                    Remove
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -68,19 +70,38 @@ function TaskCard(props: Props) {
 
                 </div>
 
-                <div className="flex flex-row justify-between items-center">
-                    <CardDescription>
-                        <p>{props.task.description}</p>
-                        <p>{props.task.creationDate.toLocaleString()}</p>
-                    </CardDescription>
-                </div>
 
 
             </CardHeader>
 
+            <CardContent>
+                <div className="flex flex-row justify-between items-start">
+                    <div className="flex flex-col justify-end items-start">
+                        <CardDescription>
+                            {props.task.creationDate.toLocaleString()}
+                        </CardDescription>
+                        <CardDescription>
+                            {props.task.completitionDate && props.task.completitionDate.toLocaleString()}
+                        </CardDescription>
+                    </div>
+                    <div className="flex flex-col justify-center items-end">
+                        {props.task.status == "DONE" ? (
+                            <div className="bg-green-300 py-1 px-2 rounded-full text-green-900 dark:text-green-900">
+                                DONE
+                            </div>
+                        ) : (
+                            <div className="bg-red-300 py-1 px-2 rounded-full text-red-900 dark:text-red-900">
+                                PENDING
+                            </div>
+                        )}
+
+                    </div>
+
+                </div>
+            </CardContent>
 
 
-        </Card>
+        </Card >
     )
 }
 

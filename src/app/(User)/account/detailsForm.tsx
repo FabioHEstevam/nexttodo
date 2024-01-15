@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 type Props = {}
 
 const MAX_FILE_SIZE = 2000000;
-const ACCEPTED_FILE_TYPES = ["application/pdf"];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const UpdateSchema = z.object({
 
@@ -30,8 +30,8 @@ const UpdateSchema = z.object({
         .refine((file) =>
             file?.size <= MAX_FILE_SIZE, `Max image size is 2MB.`)
         .refine((file) =>
-        ACCEPTED_FILE_TYPES.includes(file?.type),
-            "Only .pdf formats are supported."
+            ACCEPTED_IMAGE_TYPES.includes(file?.type),
+            "Only .jpg, .jpeg, .png and .webp formats are supported."
         )
         .optional()
 })
@@ -55,7 +55,7 @@ function DetailsForm(props: Props) {
 
         const username = values.username;
         const image = values.image;
-        
+
 
         if (image) {
             formData.append('image', image);;
@@ -67,7 +67,7 @@ function DetailsForm(props: Props) {
             }
         }
 
-        
+
         if (username || image) {
             try {
                 console.log("ok")
